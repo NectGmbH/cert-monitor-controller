@@ -16,6 +16,8 @@ const (
 	workerProcessCount = 2
 )
 
+var version string = "dev"
+
 func main() {
 	var kubeconfig, listen, masterURL string
 
@@ -51,6 +53,8 @@ func main() {
 	defer close(stopCh)
 
 	go http.ListenAndServe(listen, nil)
+
+	logrus.WithField("version", version).Info("cert-monitor-controller started")
 
 	kubeInformerFactory.Start(stopCh)
 	ctrl.Run(workerProcessCount, stopCh)
