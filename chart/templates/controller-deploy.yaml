@@ -1,0 +1,25 @@
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cert-monitor-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cert-monitor-controller
+  template:
+    metadata:
+      labels:
+        name: cert-monitor-controller
+    spec:
+      serviceAccountName: "certmonctrl-{{ .Release.Name }}"
+      containers:
+        - name: cert-monitor-controller
+          image: '{{ .Values.certMonitorController.image }}'
+          imagePullPolicy: Always
+
+# FIXME: Add service and prometheus stuff
+
+...

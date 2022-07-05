@@ -1,0 +1,7 @@
+---
+
+name: cert-monitor-controller
+description: monitoring controller to check x509 certificates within secrets and expose their expiry as prometheus metrics
+version: 0.1.0
+
+...

@@ -1,0 +1,33 @@
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "certmonctrl-{{ .Release.Name }}"
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: "certmonctrl-{{ .Release.Name }}"
+rules:
+  # FIXME
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: "certmonctrl-{{ .Release.Name }}"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: "certmonctrl-{{ .Release.Name }}"
+subjects:
+  - kind: ServiceAccount
+    name: "certmonctrl-{{ .Release.Name }}"
+    namespace: {{ .Release.Namespace | quote }}
+
+
+...
