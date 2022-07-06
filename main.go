@@ -19,12 +19,19 @@ const (
 var version string = "dev"
 
 func main() {
-	var kubeconfig, listen, masterURL string
+	var kubeconfig, listen, logLevel, masterURL string
 
 	flag.StringVar(&kubeconfig, "kubeconfig", "", "Path to a kubeconfig. Only required if out-of-cluster.")
 	flag.StringVar(&listen, "listen", ":3000", "Address to listen on for HTTP requests")
+	flag.StringVar(&logLevel, "log-level", "info", "Log-level to use for output")
 	flag.StringVar(&masterURL, "master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
 	flag.Parse()
+
+	logrusLevel, err := logrus.ParseLevel(logLevel)
+	if err != nil {
+		logrus.WithError(err).Fatal("parsing given log-level")
+	}
+	logrus.SetLevel(logrusLevel)
 
 	metricsHandler, err := newPrometheusHandler()
 	if err != nil {

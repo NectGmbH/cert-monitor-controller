@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -23,8 +24,15 @@ func (c *controller) scan(qe *queueEntry) error {
 	}
 
 	for entry, data := range secret.Data {
+		logger := logrus.WithFields(logrus.Fields{
+			"entry":     entry,
+			"name":      name,
+			"namespace": namespace,
+		})
+
 		if qe.reason == updateReasonDelete {
 			// The secret is to be deleted, remove its metrics
+			logger.Debug("removing metric")
 			c.metricsHandler.RemoveCertExpiry(namespace, name, entry)
 			continue
 		}
@@ -33,13 +41,16 @@ func (c *controller) scan(qe *queueEntry) error {
 		expiresIn, err := c.expiryFromData(data)
 		if errors.Is(err, errIsNotCertificate) {
 			// The key did not look like a cert, that's fine.
+			logger.Debug("does not contain cert")
 			continue
 		}
 
 		if err != nil {
-			return errors.Wrapf(err, "evaluating entry %q of %q", entry, qe.key)
+			logger.WithError(err).Error("evaluating entry")
+			continue
 		}
 
+		logger.WithField("expires_in", expiresIn).Debug("adding cert expiry")
 		c.metricsHandler.SetCertExpiry(namespace, name, entry, expiresIn)
 	}
 
