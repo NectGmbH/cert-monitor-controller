@@ -37,6 +37,8 @@ kind: Service
 metadata:
   annotations:
     prometheus.io/scrape: 'true'
+  labels:
+    name: cert-monitor-controller
   name: cert-monitor-controller
 spec:
   ports:
