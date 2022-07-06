@@ -61,7 +61,7 @@ func (p *prometheusHandler) SetCertExpiry(namespace, name, key string, expiresIn
 		"namespace": namespace,
 		"name":      name,
 		"key":       key,
-	}).Set(float64(expiresIn / time.Hour))
+	}).Set(float64(expiresIn) / float64(time.Hour))
 
 	p.registerKey(namespace, name, key)
 }
