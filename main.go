@@ -12,19 +12,22 @@ import (
 )
 
 const (
-	resyncDuration     = 30 * time.Second // TODO: Is 30s resync needed?
 	workerProcessCount = 2
 )
 
 var version string = "dev"
 
 func main() {
-	var kubeconfig, listen, logLevel, masterURL string
+	var (
+		kubeconfig, listen, logLevel, masterURL string
+		rescanInterval                          time.Duration
+	)
 
 	flag.StringVar(&kubeconfig, "kubeconfig", "", "Path to a kubeconfig. Only required if out-of-cluster.")
 	flag.StringVar(&listen, "listen", ":3000", "Address to listen on for HTTP requests")
 	flag.StringVar(&logLevel, "log-level", "info", "Log-level to use for output")
 	flag.StringVar(&masterURL, "master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
+	flag.DurationVar(&rescanInterval, "rescan-interval", time.Hour, "How often to re-scan existing secrets without events")
 	flag.Parse()
 
 	logrusLevel, err := logrus.ParseLevel(logLevel)
@@ -48,7 +51,7 @@ func main() {
 		logrus.WithError(err).Fatal("building kubernetes clientset")
 	}
 
-	kubeInformerFactory := informers.NewSharedInformerFactory(kubeClient, resyncDuration)
+	kubeInformerFactory := informers.NewSharedInformerFactory(kubeClient, rescanInterval)
 
 	ctrl := newController(
 		kubeClient,
