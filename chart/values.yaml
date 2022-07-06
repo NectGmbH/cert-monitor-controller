@@ -1,5 +1,7 @@
 certMonitorController:
   image: 'registry.local/cert-monitor-controller:latest'
+  imagePullSecret: ''
+  logLevel: 'info'
 
 metrics:
   serviceMonitor:
