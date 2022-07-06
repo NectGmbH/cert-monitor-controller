@@ -47,7 +47,7 @@ func (c *controller) scan(qe *queueEntry) error {
 }
 
 func (c *controller) expiryFromData(data []byte) (time.Duration, error) {
-	var plain []byte
+	plain := make([]byte, base64.StdEncoding.DecodedLen(len(data)))
 
 	_, err := base64.StdEncoding.Decode(plain, data)
 	if err != nil {
