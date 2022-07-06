@@ -52,6 +52,7 @@ func main() {
 	stopCh := make(chan struct{})
 	defer close(stopCh)
 
+	metricsHandler.AddHandler()
 	go http.ListenAndServe(listen, nil)
 
 	logrus.WithField("version", version).Info("cert-monitor-controller started")
