@@ -2,7 +2,7 @@ package main
 
 import (
 	"crypto/x509"
-	"encoding/base64"
+	"encoding/pem"
 	"time"
 
 	"github.com/pkg/errors"
@@ -58,14 +58,13 @@ func (c *controller) scan(qe *queueEntry) error {
 }
 
 func (c *controller) expiryFromData(data []byte) (time.Duration, error) {
-	plain := make([]byte, base64.StdEncoding.DecodedLen(len(data)))
-
-	_, err := base64.StdEncoding.Decode(plain, data)
-	if err != nil {
-		return 0, errors.Wrap(err, "base64 decoding data")
+	block, _ := pem.Decode(data)
+	if block == nil {
+		// That was no PEM block, certs should be PEM blocks
+		return 0, errIsNotCertificate
 	}
 
-	cert, err := x509.ParseCertificate(plain)
+	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
 		return 0, errors.Wrap(err, "parsing certificate")
 	}
