@@ -18,6 +18,12 @@ func (c *controller) scan(qe *queueEntry) error {
 		return errors.Wrapf(err, "splitting key %q to namespace / name", qe.key)
 	}
 
+	if qe.reason == updateReasonDelete {
+		// We cannot fetch a deleted secret anymore, handle it without fetching
+		c.metricsHandler.RemoveCertExpiry(namespace, name)
+		return nil
+	}
+
 	secret, err := c.secretLister.Secrets(namespace).Get(name)
 	if err != nil {
 		return errors.Wrapf(err, "getting secret %q", qe.key)
@@ -29,13 +35,6 @@ func (c *controller) scan(qe *queueEntry) error {
 			"name":      name,
 			"namespace": namespace,
 		})
-
-		if qe.reason == updateReasonDelete {
-			// The secret is to be deleted, remove its metrics
-			logger.Debug("removing metric")
-			c.metricsHandler.RemoveCertExpiry(namespace, name, entry)
-			continue
-		}
 
 		// Secret is updated or added, scan entries and add metric
 		expiresIn, err := c.expiryFromData(data)
