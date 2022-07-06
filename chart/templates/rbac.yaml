@@ -12,7 +12,9 @@ kind: ClusterRole
 metadata:
   name: "certmonctrl-{{ .Release.Name }}"
 rules:
-  # FIXME
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
 
 ---
 
@@ -28,6 +30,5 @@ subjects:
   - kind: ServiceAccount
     name: "certmonctrl-{{ .Release.Name }}"
     namespace: {{ .Release.Namespace | quote }}
-
 
 ...
