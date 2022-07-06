@@ -1,6 +1,6 @@
 ---
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-monitor-controller
@@ -39,6 +39,7 @@ spec:
   selector:
     name: cert-monitor-controller
 
+{{ if .Values.metrics.serviceMonitor.enabled }}
 ---
 
 apiVersion: monitoring.coreos.com/v1
@@ -51,5 +52,6 @@ spec:
       name: cert-monitor-controller
   endpoints:
     - port: metrics
+{{ end }}
 
 ...

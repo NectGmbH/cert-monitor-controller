@@ -1,2 +1,6 @@
 certMonitorController:
-  image: ''
+  image: 'registry.local/cert-monitor-controller:latest'
+
+metrics:
+  serviceMonitor:
+    enabled: false
