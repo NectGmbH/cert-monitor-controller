@@ -20,12 +20,12 @@ type (
 	}
 )
 
-func newPrometheusHandler() (*prometheusHandler, error) {
+func newPrometheusHandler(metricsPrefix string) (*prometheusHandler, error) {
 	expiresInDaysMetric := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Help:      "Number of hours the certificate will expire in",
 			Name:      "expires_in",
-			Namespace: "k8s_cert_monitor",
+			Namespace: metricsPrefix,
 		},
 		[]string{"namespace", "name", "key"},
 	)
