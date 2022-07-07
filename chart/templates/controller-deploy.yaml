@@ -28,16 +28,16 @@ spec:
       serviceAccountName: "certmonctrl-{{ .Release.Name }}"
       containers:
         - name: cert-monitor-controller
-          image: '{{ .Values.certMonitorController.image }}'
+          image: '{{ .Values.image }}'
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
               name: metrics
           args:
             - '-log-level'
-            - '{{ .Values.certMonitorController.logLevel }}'
+            - '{{ .Values.logLevel }}'
             - '-metrics-prefix'
-            - '{{ .Values.certMonitorController.metricsPrefix }}'
+            - '{{ .Values.metricsPrefix }}'
 {{ if ne (toString .Values.imagePullSecret.registry) "" }}
       imagePullSecrets:
         - name: cert-monitor-controller-registry
