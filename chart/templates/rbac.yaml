@@ -3,6 +3,11 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  labels:
+    app.kubernetes.io/name: cert-monitor-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
   name: "certmonctrl-{{ .Release.Name }}"
 
 ---
@@ -10,6 +15,11 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  labels:
+    app.kubernetes.io/name: cert-monitor-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
   name: "certmonctrl-{{ .Release.Name }}"
 rules:
   - apiGroups: [""]
@@ -21,6 +31,11 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
+  labels:
+    app.kubernetes.io/name: cert-monitor-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
   name: "certmonctrl-{{ .Release.Name }}"
 roleRef:
   apiGroup: rbac.authorization.k8s.io

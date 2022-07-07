@@ -4,15 +4,26 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-monitor-controller
+  labels:
+    app.kubernetes.io/name: cert-monitor-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: cert-monitor-controller
+      app.kubernetes.io/name: cert-monitor-controller
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
   template:
     metadata:
       labels:
-        name: cert-monitor-controller
+        app.kubernetes.io/name: cert-monitor-controller
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+      name: cert-monitor-controller
     spec:
       serviceAccountName: "certmonctrl-{{ .Release.Name }}"
       containers:
@@ -25,42 +36,11 @@ spec:
           args:
             - '-log-level'
             - '{{ .Values.certMonitorController.logLevel }}'
-{{ if ne (toString .Values.certMonitorController.imagePullSecrets) "" }}
+            - '-metrics-prefix'
+            - '{{ .Values.certMonitorController.metricsPrefix }}'
+{{ if ne (toString .Values.imagePullSecret.registry) "" }}
       imagePullSecrets:
-        - name: '{{ .Values.certMonitorController.imagePullSecret }}'
-{{ end }}
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    prometheus.io/scrape: 'true'
-  labels:
-    name: cert-monitor-controller
-  name: cert-monitor-controller
-spec:
-  ports:
-    - name: metrics
-      port: 3000
-      protocol: TCP
-  selector:
-    name: cert-monitor-controller
-
-{{ if .Values.metrics.serviceMonitor.enabled }}
----
-
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: cert-monitor-controller
-spec:
-  selector:
-    matchLabels:
-      name: cert-monitor-controller
-  endpoints:
-    - port: metrics
+        - name: cert-monitor-controller-registry
 {{ end }}
 
 ...

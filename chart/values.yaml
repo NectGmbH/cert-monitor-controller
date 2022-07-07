@@ -1,8 +1,22 @@
 certMonitorController:
+  # Source of the built Docker image using the Dockerfile in the repo root
   image: 'registry.local/cert-monitor-controller:latest'
-  imagePullSecret: ''
+  # Valid log-levels for logrus (debug, info, error are used)
   logLevel: 'info'
+  # Prefix for metrics exported in the controller
+  metricsPrefix: 'k8s_cert_monitor'
 
-metrics:
-  serviceMonitor:
-    enabled: false
+# Registry configuration to access the image provided above
+# (no configuration is added when registry is an empty string)
+imagePullSecret:
+  registry: ''
+  user: ''
+  password: ''
+
+monitoring:
+  # Whether to generate ServiceMonitor, PrometheusRule and Grafana dashboard
+  # Requires kube-prometheus-stack to be installed
+  enabled: false
+  # Create alert to notify when certificate will expire in less than X hours
+  alertWhenExpiresLessThan: 240
+

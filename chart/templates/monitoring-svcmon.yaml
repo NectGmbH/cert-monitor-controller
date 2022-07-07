@@ -1,0 +1,20 @@
+{{ if .Values.monitoring.enabled }}
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/name: cert-monitor-controller
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+  name: cert-monitor-controller
+spec:
+  selector:
+    name: cert-monitor-controller
+  endpoints:
+    - port: metrics
+
+...
+{{ end }}
