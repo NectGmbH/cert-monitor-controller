@@ -60,7 +60,7 @@ func (c *controller) scan(qe *queueEntry) error {
 }
 
 // expiryFromData takes the PEM encoded x509 certificate and extracts
-// the time until expiration. The certificate is not valdiated!
+// the time until expiration. The certificate is not validiated!
 func (c *controller) expiryFromData(data []byte) (time.Duration, error) {
 	block, _ := pem.Decode(data)
 	if block == nil {

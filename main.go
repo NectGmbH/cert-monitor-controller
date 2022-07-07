@@ -15,7 +15,7 @@ const (
 	workerProcessCount = 2
 )
 
-var version string = "dev"
+var version = "dev"
 
 func main() {
 	var (
