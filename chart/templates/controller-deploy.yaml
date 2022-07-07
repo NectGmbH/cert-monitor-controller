@@ -29,7 +29,7 @@ spec:
       containers:
         - name: cert-monitor-controller
           image: '{{ .Values.image }}'
-          imagePullPolicy: Always
+          imagePullPolicy: '{{ .Values.imagePullPolicy }}'
           ports:
             - containerPort: 3000
               name: metrics
