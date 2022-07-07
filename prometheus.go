@@ -12,6 +12,7 @@ import (
 )
 
 type (
+	// prometheusHandler is a wrapper around a Prometheus GaugeVec
 	prometheusHandler struct {
 		expiresInDaysMetric *prometheus.GaugeVec
 
@@ -40,10 +41,12 @@ func newPrometheusHandler(metricsPrefix string) (*prometheusHandler, error) {
 	}, nil
 }
 
+// AddHandler installs the HTTP listener in the default HTTP mux
 func (p *prometheusHandler) AddHandler() {
 	http.Handle("/metrics", promhttp.Handler())
 }
 
+// RemoveCertExpiry removes all metrics belonging to the given secret in given namespace
 func (p *prometheusHandler) RemoveCertExpiry(namespace, name string) {
 	for _, key := range p.getKeys(namespace, name) {
 		p.expiresInDaysMetric.Delete(prometheus.Labels{
@@ -56,6 +59,7 @@ func (p *prometheusHandler) RemoveCertExpiry(namespace, name string) {
 	p.clearKeys(namespace, name)
 }
 
+// SetCertExpiry adds or updates the expiry for the given key in namespace/name combination
 func (p *prometheusHandler) SetCertExpiry(namespace, name, key string, expiresIn time.Duration) {
 	p.expiresInDaysMetric.With(prometheus.Labels{
 		"namespace": namespace,
@@ -66,6 +70,7 @@ func (p *prometheusHandler) SetCertExpiry(namespace, name, key string, expiresIn
 	p.registerKey(namespace, name, key)
 }
 
+// clearKeys removes the keys for the given secret namespace/name
 func (p *prometheusHandler) clearKeys(namespace, name string) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
@@ -73,6 +78,7 @@ func (p *prometheusHandler) clearKeys(namespace, name string) {
 	delete(p.keyRegistry, path.Join(namespace, name))
 }
 
+// getKeys returns the known keys within the secret in namespace/name combination
 func (p *prometheusHandler) getKeys(namespace, name string) []string {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
@@ -80,6 +86,7 @@ func (p *prometheusHandler) getKeys(namespace, name string) []string {
 	return p.keyRegistry[path.Join(namespace, name)]
 }
 
+// registerKey registers a new key for the given secret in namespace/name combination for later removal of the metric
 func (p *prometheusHandler) registerKey(namespace, name, key string) {
 	p.lock.Lock()
 	defer p.lock.Unlock()

@@ -12,6 +12,9 @@ import (
 
 var errIsNotCertificate = errors.New("key does not contain a certificate")
 
+// scan is the primary logic iterating through the fields of a secret
+// checking for the existence of a certificate within any of the keys
+// adding the expiry to the prometheusHandler if found
 func (c *controller) scan(qe *queueEntry) error {
 	namespace, name, err := cache.SplitMetaNamespaceKey(qe.key)
 	if err != nil {
@@ -56,6 +59,8 @@ func (c *controller) scan(qe *queueEntry) error {
 	return nil
 }
 
+// expiryFromData takes the PEM encoded x509 certificate and extracts
+// the time until expiration. The certificate is not valdiated!
 func (c *controller) expiryFromData(data []byte) (time.Duration, error) {
 	block, _ := pem.Decode(data)
 	if block == nil {

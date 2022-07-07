@@ -1,5 +1,8 @@
+---
+
 # Source of the built Docker image using the Dockerfile in the repo root
 image: 'registry.local/cert-monitor-controller:latest'
+# Specify imagePullPolicy for the deployment
 imagePullPolicy: 'IfNotPresent'
 # Valid log-levels for logrus (debug, info, error are used)
 logLevel: 'info'
@@ -20,3 +23,4 @@ monitoring:
   # Create alert to notify when certificate will expire in less than X hours
   alertWhenExpiresLessThan: 240
 
+...
