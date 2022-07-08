@@ -25,7 +25,6 @@ spec:
         helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
       name: cert-monitor-controller
     spec:
-      serviceAccountName: "certmonctrl-{{ .Release.Name }}"
       containers:
         - name: cert-monitor-controller
           image: '{{ .Values.image }}'
@@ -42,5 +41,10 @@ spec:
       imagePullSecrets:
         - name: cert-monitor-controller-registry
 {{ end }}
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsUser: 1000
+      serviceAccountName: "certmonctrl-{{ .Release.Name }}"
 
 ...

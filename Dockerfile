@@ -19,12 +19,16 @@ FROM alpine:3.16
 LABEL maintainer "Knut Ahlers <ka@nect.com>"
 
 RUN set -ex \
+ && addgroup -g 1000 certmon \
+ && adduser -D -G certmon -H -u 1000 certmon \
  && apk --no-cache add \
       ca-certificates
 
 COPY --from=builder /go/bin/cert-monitor-controller /usr/local/bin/cert-monitor-controller
 
 EXPOSE 3000
+
+USER certmon
 
 ENTRYPOINT ["/usr/local/bin/cert-monitor-controller"]
 CMD ["--"]
