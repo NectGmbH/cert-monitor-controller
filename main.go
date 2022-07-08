@@ -64,7 +64,12 @@ func main() {
 	defer close(stopCh)
 
 	metricsHandler.AddHandler()
-	go http.ListenAndServe(listen, nil)
+	go func() {
+		if err := http.ListenAndServe(listen, nil); err != nil {
+			logrus.WithError(err).Error("HTTP server reported error")
+			close(stopCh)
+		}
+	}()
 
 	logrus.WithField("version", version).Info("cert-monitor-controller started")
 
