@@ -18,7 +18,7 @@ spec:
           for: 1m
           expr: {{ .Values.metricsPrefix }}_expires_in < {{ .Values.monitoring.alertWhenExpiresLessThan }}
           annotations:
-            message: The certificate in {{ "{{ $labels.namespace }}/{{ $labels.name }}" }} will expire in less than {{ .Values.monitoring.alertWhenExpiresLessThan }} hours
+            message: The certificate in {{ "{{ $labels.exported_namespace }}/{{ $labels.name }}" }} at key {{ "{{ $labels.key }}" }} will expire in less than {{ .Values.monitoring.alertWhenExpiresLessThan }} hours
 
 ...
 {{ end }}
