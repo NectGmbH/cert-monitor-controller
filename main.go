@@ -66,8 +66,7 @@ func main() {
 	metricsHandler.AddHandler()
 	go func() {
 		if err := http.ListenAndServe(listen, nil); err != nil {
-			logrus.WithError(err).Error("HTTP server reported error")
-			close(stopCh)
+			logrus.WithError(err).Fatal("HTTP server reported error")
 		}
 	}()
 
