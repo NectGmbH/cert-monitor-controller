@@ -44,10 +44,7 @@ data:
       "liveNow": false,
       "panels": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
+          "datasource": null,
           "fieldConfig": {
             "defaults": {
               "color": {

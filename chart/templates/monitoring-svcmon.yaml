@@ -12,7 +12,8 @@ metadata:
   name: cert-monitor-controller
 spec:
   selector:
-    name: cert-monitor-controller
+    matchLabels:
+      app.kubernetes.io/name: cert-monitor-controller
   endpoints:
     - port: metrics
 
